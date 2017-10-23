@@ -2,16 +2,15 @@
 
 namespace DeveoDK\Core\Exception\Exceptions\Http;
 
-use Exception;
-use Symfony\Component\HttpKernel\Exception\HttpException;
+use DeveoDK\Core\Exception\Exceptions\BaseException;
 
-class MethodNotAllowedException extends HttpException
+class MethodNotAllowedException extends BaseException
 {
     /**
      * Provides a common error code for CORE exceptions
      * @var string
      */
-    const ERROR_CODE = 3001;
+    const ERROR_CODE = 3002;
 
     /**
      * The given HTTP status code for the exception
@@ -21,12 +20,15 @@ class MethodNotAllowedException extends HttpException
 
     /**
      * MethodNotAllowedException constructor.
-     * @param null $message
-     * @param Exception|null $previous
-     * @param array $headers
+     * @param string $title
+     * @param string $message
+     * @param null $previous
      */
-    public function __construct($message = null, \Exception $previous = null, array $headers = array())
+    public function __construct($title = null, $message = null, $previous = null)
     {
-        parent::__construct(self::HTTP_CODE, $message, $previous, $headers, self::ERROR_CODE);
+        $title = ($title) ? $title : __('exceptions.MethodNotAllowedException.title');
+        $message = ($message) ? $message : __('exceptions.MethodNotAllowedException.message');
+
+        parent::__construct(self::HTTP_CODE, self::ERROR_CODE, $title, $message, $previous);
     }
 }
