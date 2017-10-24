@@ -17,5 +17,8 @@ class ExceptionServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../translation/da/exceptions.php' => resource_path('lang/da/exceptions.php'),
         ]);
+        $this->publishes([
+            __DIR__ . '/../config/exception.php' => config_path('core/exception.php'),
+        ]);
     }
 }

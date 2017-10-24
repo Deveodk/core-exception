@@ -45,6 +45,10 @@ return [
     'UpdateFailedException' => [
         'title' => 'Opdatering mislykkedes',
         'message' => 'Kunne ikke opdatere ressource'
-    ]
+    ],
 
+    'ServerException' => [
+        'title' => 'Server fejl',
+        'message' => 'Noget på vores side gik galt'
+    ]
 ];

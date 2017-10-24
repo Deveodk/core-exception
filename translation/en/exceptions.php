@@ -45,5 +45,10 @@ return [
     'UpdateFailedException' => [
         'title' => 'Update failed',
         'message' => 'Failed to update resource'
+    ],
+
+    'ServerException' => [
+        'title' => 'Server error',
+        'message' => 'Something went wrong on our side'
     ]
 ];

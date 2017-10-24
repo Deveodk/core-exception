@@ -8,12 +8,14 @@ use DeveoDK\Core\Exception\Exceptions\Http\NotFoundException;
 use DeveoDK\Core\Exception\Formatters\CoreExceptionFormatter;
 use DeveoDK\Core\Exception\Formatters\ExceptionFormatter;
 use DeveoDK\Core\Exception\Formatters\ValidationFormatter;
+use DeveoDK\Core\Exception\Reporters\ReporterInterface;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\Debug\Exception\FatalThrowableError;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use DeveoDK\Core\Exception\Exceptions\Validation\ValidationException as CoreValidation;
@@ -28,7 +30,11 @@ class ExceptionHandler extends Handler
         AuthorizationException::class,
         ModelNotFoundException::class,
         ValidationException::class,
+        CoreValidation::class,
     ];
+
+    /** @var string */
+    protected $reportedID;
 
     /**
      * @param \Illuminate\Http\Request $request
@@ -59,6 +65,20 @@ class ExceptionHandler extends Handler
      */
     public function report(Exception $exception)
     {
+        $config = config('core.exception');
+        $reporterClass = $config['reporter'];
+
+        if (!$this->shouldReport($exception)) {
+            return parent::report($exception);
+        }
+
+        if (class_exists($reporterClass)) {
+            /** @var ReporterInterface $reporter */
+            $reporter = new $reporterClass();
+            $reportedID = $reporter->report($exception);
+            $this->reportedID = $reportedID;
+        }
+
         return parent::report($exception);
     }
 
@@ -97,6 +117,10 @@ class ExceptionHandler extends Handler
 
         $errors['status'] = $status;
 
+        if ($this->reportedID !== null) {
+            $errors['case_id'] = $this->reportedID;
+        }
+
         return response()->json($errors, $status);
     }
 
@@ -119,5 +143,13 @@ class ExceptionHandler extends Handler
                 throw new MethodNotAllowedException();
                 break;
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getReportedID()
+    {
+        return $this->reportedID;
     }
 }

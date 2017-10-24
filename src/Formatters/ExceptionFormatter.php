@@ -15,14 +15,14 @@ class ExceptionFormatter extends BaseFormatter
     {
         $data = [
             'code'   => $exception->getCode(),
-            'title' => "",
-            'detail'   => $exception->getMessage(),
+            'title' => __('exceptions.ServerException.title'),
+            'detail'   => __('exceptions.ServerException.message'),
         ];
 
         if (env('APP_DEBUG')) {
             $data = [
                 'code'   => $exception->getCode(),
-                'title' => "",
+                'title' => __('exceptions.ServerException.title'),
                 'detail'   => $exception->getMessage(),
                 'line'   => $exception->getLine(),
                 'file'   => $exception->getFile(),
