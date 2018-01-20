@@ -86,6 +86,10 @@ class ExceptionHandler extends Handler
             return parent::report($exception);
         }
 
+        if (env('APP_DEBUG', false)) {
+            return null;
+        }
+
         if (method_exists($exception, 'getSeverity')) {
             $severity = $exception->getSeverity();
         }
