@@ -36,56 +36,38 @@ return [
      * Exception codes for the core exception based platform.
      */
     'error_codes' => [
-        // Creation failed
-        'A1000' => [
+        // A1000 series
+        'Creation failed' => [
             'A1000' => \DeveoDK\Core\Exception\Exceptions\Crud\CreationFailedException::class,
         ],
 
-        // Deletion failed
-        'A2000' => [
+        // A2000 series
+        'Deletion failed' => [
             'A2000' => \DeveoDK\Core\Exception\Exceptions\Crud\DeleteFailedException::class,
         ],
 
-        // Update failed
-        'A3000' => [
-            'A3000' => \DeveoDK\Core\Exception\Exceptions\Crud\ReadFailedException::class,
+        // A3000 series
+        'Update failed' => [
+            'A3000' => \DeveoDK\Core\Exception\Exceptions\Crud\UpdateFailedException::class,
         ],
 
-        // Read failed
-        'A4000' => [
+        // A4000 series
+        'Read failed' => [
             'A4000' => \DeveoDK\Core\Exception\Exceptions\Crud\ReadFailedException::class
         ],
 
-        // Notification failed
-        'B1000' => [],
+        // B1000 series
+        'Notification failed' => [],
 
-        // Rate limited
-        'C1000' => [
+        // C1000 series
+        'Framework general errors' => [
             'C1000' => \DeveoDK\Core\Exception\Exceptions\Http\ToManyRequestsException::class,
+            'C1001' => \DeveoDK\Core\Exception\Exceptions\Http\MethodNotAllowedException::class,
+            'C1003' => \DeveoDK\Core\Exception\Exceptions\Http\ResourceNotFoundException::class,
+            'C1004' => \DeveoDK\Core\Exception\Exceptions\Validation\ValidationException::class,
         ],
 
-        // Method not allowed
-        'C2000' => [
-            'C2000' => \DeveoDK\Core\Exception\Exceptions\Http\MethodNotAllowedException::class,
-        ],
-
-        // Resource not found
-        'C3000' => [
-            'C3000' => \DeveoDK\Core\Exception\Exceptions\Http\ResourceNotFoundException::class,
-        ],
-
-        // Validation
-        'D1000' => [
-            'D1000' => \DeveoDK\Core\Exception\Exceptions\Validation\ValidationException::class,
-        ],
-
-        // Unauthorized
-        'Q1000' => [],
-
-        // OAUTH2 Callback failed
-        'Q2000' => [],
-
-        // To many login attempts
-        'Q3000' => [],
+        // D1000 series
+        'Authorization errors' => [],
     ],
 ];

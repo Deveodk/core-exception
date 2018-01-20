@@ -7,28 +7,17 @@ use DeveoDK\Core\Exception\Exceptions\BaseException;
 class ToManyRequestsException extends BaseException
 {
     /**
-     * Provides a common error code for CORE exceptions
-     * @var string
-     */
-    const ERROR_CODE = 3002;
-
-    /**
      * The given HTTP status code for the exception
      * @var string
      */
-    const HTTP_CODE = 429;
+    const STATUS_CODE = 429;
 
     /**
      * ToManyRequestsException constructor.
-     * @param string $title
-     * @param string $message
-     * @param null $previous
+     * @param null|string $bundle
      */
-    public function __construct($title = null, $message = null, $previous = null)
+    public function __construct(?string $bundle = null)
     {
-        $title = ($title) ? $title : __('exceptions.ToManyRequestsException.title');
-        $message = ($message) ? $message : __('exceptions.ToManyRequestsException.message');
-
-        parent::__construct(self::HTTP_CODE, self::ERROR_CODE, $title, $message, $previous);
+        parent::__construct(self::STATUS_CODE, $bundle);
     }
 }

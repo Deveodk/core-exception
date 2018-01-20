@@ -14,9 +14,10 @@ class ResourceNotFoundException extends BaseException
 
     /**
      * ResourceNotFoundException constructor.
+     * @param null|string $bundle
      */
-    public function __construct()
+    public function __construct(?string $bundle = null)
     {
-        parent::__construct(self::HTTP_CODE);
+        parent::__construct(self::STATUS_CODE, $bundle);
     }
 }
