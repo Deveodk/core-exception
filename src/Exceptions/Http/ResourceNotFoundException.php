@@ -10,7 +10,7 @@ class ResourceNotFoundException extends BaseException
      * The given HTTP status code for the exception
      * @var string
      */
-    const HTTP_CODE = 404;
+    const STATUS_CODE = 404;
 
     /**
      * ResourceNotFoundException constructor.

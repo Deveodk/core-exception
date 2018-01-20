@@ -74,11 +74,12 @@ abstract class BaseException extends Exception
      * @param string $bundle
      * @param string $title
      * @param string $message
+     * @param null|string $severity
      * @param Throwable|null $previous
      */
     public function __construct(
         int $statusCode = 500,
-        string $bundle = '',
+        ?string $bundle = null,
         ?string $title = null,
         ?string $message = null,
         ?string $severity = null,
@@ -174,7 +175,7 @@ abstract class BaseException extends Exception
 
         $bundleAppend = 'exceptions';
 
-        if ($this->bundle !== '') {
+        if ($this->bundle !== null) {
             $bundleAppend = $this->bundle . ':exceptions';
         }
 
