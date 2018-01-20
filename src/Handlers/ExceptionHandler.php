@@ -5,6 +5,7 @@ namespace DeveoDK\Core\Exception\Handlers;
 use DeveoDK\Core\Exception\Exceptions\BaseException;
 use DeveoDK\Core\Exception\Exceptions\Http\MethodNotAllowedException;
 use DeveoDK\Core\Exception\Exceptions\Http\NotFoundException;
+use DeveoDK\Core\Exception\Exceptions\Http\ToManyRequestsException;
 use DeveoDK\Core\Exception\Formatters\CoreExceptionFormatter;
 use DeveoDK\Core\Exception\Formatters\ExceptionFormatter;
 use DeveoDK\Core\Exception\Formatters\ValidationFormatter;
@@ -15,10 +16,10 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
-use Symfony\Component\Debug\Exception\FatalThrowableError;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use DeveoDK\Core\Exception\Exceptions\Validation\ValidationException as CoreValidation;
+use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 
 class ExceptionHandler extends Handler
 {
@@ -43,7 +44,7 @@ class ExceptionHandler extends Handler
      */
     public function render($request, Exception $exception)
     {
-        if (env('EXCEPTION_HANDLER') === 'laravel') {
+        if (config('core.exception.exception_handler') === 'laravel') {
             return parent::render($request, $exception);
         }
 
@@ -125,10 +126,14 @@ class ExceptionHandler extends Handler
     }
 
     /**
+     * Convert symfony and laravel exceptions
+     * into core exceptions.
+     *
      * @param Exception $exception
      * @throws CoreValidation
      * @throws MethodNotAllowedException
      * @throws NotFoundException
+     * @throws ToManyRequestsException
      */
     protected function convertToCoreException(Exception $exception)
     {
@@ -139,6 +144,8 @@ class ExceptionHandler extends Handler
             case $exception instanceof ValidationException:
                 throw new CoreValidation($exception->validator);
                 break;
+            case $exception instanceof TooManyRequestsHttpException:
+                throw new ToManyRequestsException();
             case $exception instanceof MethodNotAllowedHttpException:
                 throw new MethodNotAllowedException();
                 break;

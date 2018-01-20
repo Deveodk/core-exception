@@ -14,14 +14,14 @@ class CoreExceptionFormatter extends BaseFormatter
     public function format(BaseException $exception, array $reporterResponses)
     {
         $data = [
-            'code'   => $exception->getCode(),
+            'code'   => $exception->getCoreExceptionCode(),
             'title' => $exception->getTitle(),
             'detail'   => $exception->getMessage(),
         ];
 
         if (env('APP_DEBUG')) {
             $data = [
-                'code'   => $exception->getCode(),
+                'code'   => $exception->getCoreExceptionCode(),
                 'title' => $exception->getTitle(),
                 'detail'   => $exception->getMessage(),
                 'line'   => $exception->getLine(),

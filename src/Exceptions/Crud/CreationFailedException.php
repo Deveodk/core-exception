@@ -1,38 +1,22 @@
 <?php
 
-namespace DeveoDK\Core\Exception\Exceptions\Http;
+namespace DeveoDK\Core\Exception\Exceptions\Crud;
 
 use DeveoDK\Core\Exception\Exceptions\BaseException;
 
 class CreationFailedException extends BaseException
 {
     /**
-     * Provides a common error code for CORE exceptions
-     * @var string
-     */
-    const ERROR_CODE = 3002;
-
-    /**
      * The given HTTP status code for the exception
      * @var string
      */
-    const HTTP_CODE = 404;
+    const STATUS_CODE = 404;
 
     /**
-     * CreationFailed constructor.
-     * @param integer $statusCode
-     * @param integer $code
-     * @param string $title
-     * @param string $message
-     * @param null $previous
+     * CreationFailedException constructor.
      */
-    public function __construct($statusCode = null, $code = null, $title = null, $message = null, $previous = null)
+    public function __construct()
     {
-        $statusCode = ($statusCode) ? $statusCode : self::HTTP_CODE;
-        $code = ($code) ? $code : self::ERROR_CODE;
-        $title = ($title) ? $title : __('exceptions.CreationFailedException.title');
-        $message = ($message) ? $message : __('exceptions.CreationFailedException.message');
-
-        parent::__construct($statusCode, $code, $title, $message, $previous);
+        parent::__construct(self::STATUS_CODE);
     }
 }

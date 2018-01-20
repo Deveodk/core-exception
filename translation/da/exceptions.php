@@ -12,6 +12,11 @@ return [
       |
       */
 
+    'defaultException' => [
+        'title' => 'Fejl',
+        'message' => 'Der er desværre sket en fejl'
+    ],
+
     'NotFoundException' => [
         'title' => 'Ikke fundet',
         'message' => 'Den ønskede ressource blev ikke fundet'

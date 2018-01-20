@@ -5,27 +5,207 @@ namespace DeveoDK\Core\Exception\Exceptions;
 use Exception;
 use Throwable;
 
-class BaseException extends Exception
+abstract class BaseException extends Exception
 {
-    /** @var int */
-    protected $statusCode;
-
-    /** @var string */
+    /**
+     * Core exception title
+     * This is variable depending on the
+     * Exception that have been thrown
+     *
+     * @var string
+     */
     protected $title;
 
     /**
+     * Core exception message
+     * This is variable depending on the
+     * Exception that have been thrown
+     *
+     * @var string
+     */
+    protected $message;
+
+    /**
+     * PHP Core exception code
+     * This is used to qualify which errors
+     * Are CORE exceptions.
+     *
+     * @var int
+     */
+    private $phpExceptionCode = 3400;
+
+    /**
+     * Core exception code
+     * This is used to track which type
+     * of errors get thrown and for support purposes.
+     *
+     * @var string
+     */
+    protected $coreExceptionCode;
+
+    /**
+     * Core exception bundle
+     * This is used to look for exception
+     * Translation so we can humanize exception.
+     *
+     * @var string
+     */
+    protected $bundle;
+
+    /**
+     * Core exception status code,
+     * Used for HTTP status.
+     *
+     * @var int
+     */
+    protected $statusCode;
+
+    /**
      * BaseException constructor.
-     * @param string $statusCode
-     * @param int $code
+     * @param int $statusCode
+     * @param string $bundle
      * @param string $title
      * @param string $message
      * @param Throwable|null $previous
      */
-    public function __construct($statusCode, $code, $title = "", $message = "", Throwable $previous = null)
-    {
+    public function __construct(
+        int $statusCode = 500,
+        string $bundle = '',
+        ?string $title = null,
+        ?string $message = null,
+        Throwable $previous = null
+    ) {
+        $this->bundle = $bundle;
         $this->statusCode = $statusCode;
+        $this->title = $this->parseTitle($title);
+        $this->message = $this->parseMessage($message);
+        $this->coreExceptionCode = $this->parseCoreExceptionCode();
+
+        parent::__construct($this->message, $this->phpExceptionCode, $previous);
+    }
+
+    /**
+     * @param null|string $message
+     * @return array|null|string
+     */
+    private function parseMessage(?string $message)
+    {
+        if (!is_null($message)) {
+            return $message;
+        }
+
+        $message = $this->parseTranslation('message');
+
+        if (is_null($message)) {
+            return __('exception.defaultException.message');
+        }
+
+        return $message;
+    }
+
+    /**
+     * @param null|string $title
+     * @return array|null|string
+     */
+    private function parseTitle(?string $title)
+    {
+        if (!is_null($title)) {
+            return $title;
+        }
+
+        $title = $this->parseTranslation('title');
+
+        if (is_null($title)) {
+            return __('exception.defaultException.title');
+        }
+
+        return $title;
+    }
+
+    /**
+     * @param string $key
+     * @return array|null|string
+     */
+    private function parseTranslation(string $key)
+    {
+        $class = get_called_class();
+
+        $bundleAppend = 'exceptions';
+
+        if ($this->bundle !== '') {
+            $bundleAppend = $this->bundle . ':exceptions';
+        }
+
+        $searchable = sprintf(
+            '%s.%s.%s',
+            $bundleAppend,
+            $class,
+            $key
+        );
+
+        $result = __($searchable);
+
+        if ($result === $searchable) {
+            return null;
+        }
+
+        return $result;
+    }
+
+    /**
+     * @return int|null|string
+     */
+    private function parseCoreExceptionCode()
+    {
+        $config = config('core.exception');
+
+        $errorCodes = $config['error_codes'];
+
+        return $this->findExceptionCode($errorCodes);
+    }
+
+    /**
+     * @param array $exceptions
+     * @return int|null|string
+     */
+    private function findExceptionCode(array $exceptions)
+    {
+        foreach ($exceptions as $key => $exception) {
+            // If is array find value
+            if (!is_array($exception)) {
+                if ($exception === get_called_class()) {
+                    return $key;
+                }
+
+                // When not array we found.
+                continue;
+            }
+
+            $match = $this->findExceptionCode($exception);
+
+            // Found the key
+            if (!is_null($match)) {
+                return $match;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * @param string $title
+     */
+    public function setTitle(string $title)
+    {
         $this->title = $title;
-        parent::__construct($message, $code, $previous);
     }
 
     /**
@@ -45,18 +225,18 @@ class BaseException extends Exception
     }
 
     /**
-     * @return string|null
+     * @return string
      */
-    public function getTitle()
+    public function getCoreExceptionCode(): string
     {
-        return $this->title;
+        return $this->coreExceptionCode;
     }
 
     /**
-     * @param string $title
+     * @param string $coreExceptionCode
      */
-    public function setTitle(string $title)
+    public function setCoreExceptionCode(string $coreExceptionCode): void
     {
-        $this->title = $title;
+        $this->coreExceptionCode = $coreExceptionCode;
     }
 }

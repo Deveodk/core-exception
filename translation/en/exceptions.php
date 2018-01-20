@@ -11,6 +11,10 @@ return [
       | You should modify these language files to fit your application.
       |
       */
+    'defaultException' => [
+        'title' => 'Error',
+        'message' => 'Something went wrong'
+    ],
 
     'NotFoundException' => [
         'title' => 'Not found',

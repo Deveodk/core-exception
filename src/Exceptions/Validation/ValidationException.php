@@ -9,12 +9,6 @@ use Throwable;
 class ValidationException extends BaseException
 {
     /**
-     * Provides a common error code for CORE exceptions
-     * @var string
-     */
-    const ERROR_CODE = 3004;
-
-    /**
      * The given HTTP status code for the exception
      * @var string
      */
@@ -23,10 +17,14 @@ class ValidationException extends BaseException
     /** @var Validator */
     protected $validator;
 
-    public function __construct(Validator $validator, $message = "", Throwable $previous = null)
+    /**
+     * ValidationException constructor.
+     * @param Validator $validator
+     */
+    public function __construct(?Validator $validator = null)
     {
         $this->validator = $validator;
-        parent::__construct(self::HTTP_CODE, self::ERROR_CODE, "", $message, $previous);
+        parent::__construct(self::HTTP_CODE);
     }
 
     /**

@@ -2,17 +2,10 @@
 
 namespace DeveoDK\Core\Exception\Exceptions\Http;
 
-use Exception;
-use Symfony\Component\HttpKernel\Exception\HttpException;
+use DeveoDK\Core\Exception\Exceptions\BaseException;
 
-class ResourceNotFoundException extends HttpException
+class ResourceNotFoundException extends BaseException
 {
-    /**
-     * Provides a common error code for CORE exceptions
-     * @var string
-     */
-    const ERROR_CODE = 3002;
-
     /**
      * The given HTTP status code for the exception
      * @var string
@@ -20,13 +13,10 @@ class ResourceNotFoundException extends HttpException
     const HTTP_CODE = 404;
 
     /**
-     * MethodNotAllowedException constructor.
-     * @param null $message
-     * @param Exception|null $previous
-     * @param array $headers
+     * ResourceNotFoundException constructor.
      */
-    public function __construct($message = null, \Exception $previous = null, array $headers = array())
+    public function __construct()
     {
-        parent::__construct(self::HTTP_CODE, $message, $previous, $headers, self::ERROR_CODE);
+        parent::__construct(self::HTTP_CODE);
     }
 }
