@@ -17,43 +17,38 @@ return [
         'message' => 'Der er desværre sket en fejl'
     ],
 
-    'NotFoundException' => [
+    \DeveoDK\Core\Exception\Exceptions\Http\ResourceNotFoundException::class => [
         'title' => 'Ikke fundet',
         'message' => 'Den ønskede ressource blev ikke fundet'
     ],
 
-    'MethodNotAllowedException' => [
+    \DeveoDK\Core\Exception\Exceptions\Http\MethodNotAllowedException::class => [
         'title' => 'Http metode ikke tilladt',
         'message' => 'Den anmodede Http-metode var ikke tilladt'
     ],
 
-    'ToManyRequestsException' => [
+    \DeveoDK\Core\Exception\Exceptions\Http\ToManyRequestsException::class => [
         'title' => 'Til mange anmodninger',
         'message' => 'Der har været mange forespørgsler i det givne tidsrum'
     ],
 
-    'CreationFailedException' => [
+    \DeveoDK\Core\Exception\Exceptions\Crud\CreationFailedException::class => [
         'title' => 'Creation failed',
         'message' => 'Kunne ikke oprette ressource'
     ],
 
-    'DeleteFailedException' => [
+    \DeveoDK\Core\Exception\Exceptions\Crud\DeleteFailedException::class => [
         'title' => 'Slet mislykket',
         'message' => 'Kunne ikke slette ressource'
     ],
 
-    'ReadFailedException' => [
+    \DeveoDK\Core\Exception\Exceptions\Crud\ReadFailedException::class => [
         'title' => 'Læs mislykket',
         'message' => 'Kunne ikke hente ressource'
     ],
 
-    'UpdateFailedException' => [
+    \DeveoDK\Core\Exception\Exceptions\Crud\UpdateFailedException::class => [
         'title' => 'Opdatering mislykkedes',
         'message' => 'Kunne ikke opdatere ressource'
-    ],
-
-    'ServerException' => [
-        'title' => 'Server fejl',
-        'message' => 'Noget på vores side gik galt'
     ]
 ];

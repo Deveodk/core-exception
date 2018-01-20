@@ -7,6 +7,14 @@ use Illuminate\Support\ServiceProvider;
 class ExceptionServiceProvider extends ServiceProvider
 {
     /**
+     * Register method
+     */
+    public function register()
+    {
+        $this->mergeConfigFrom(__DIR__ . '/../config/exception.php', 'core.exception');
+    }
+
+    /**
      * Providers boot method
      */
     public function boot()

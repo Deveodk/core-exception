@@ -61,6 +61,14 @@ abstract class BaseException extends Exception
     protected $statusCode;
 
     /**
+     * Core exception severity
+     * Is used for tracking
+     *
+     * @var string|null
+     */
+    protected $severity;
+
+    /**
      * BaseException constructor.
      * @param int $statusCode
      * @param string $bundle
@@ -73,6 +81,7 @@ abstract class BaseException extends Exception
         string $bundle = '',
         ?string $title = null,
         ?string $message = null,
+        ?string $severity = null,
         Throwable $previous = null
     ) {
         $this->bundle = $bundle;
@@ -80,8 +89,41 @@ abstract class BaseException extends Exception
         $this->title = $this->parseTitle($title);
         $this->message = $this->parseMessage($message);
         $this->coreExceptionCode = $this->parseCoreExceptionCode();
+        $this->severity = $this->parseSeverity($severity);
 
         parent::__construct($this->message, $this->phpExceptionCode, $previous);
+    }
+
+    /**
+     * Parse severity options
+     * debug (the least serious)
+     * info
+     * warning
+     * error
+     * fatal (the most serious)
+     *
+     * @param null|string $severity
+     * @return string
+     */
+    private function parseSeverity(?string $severity)
+    {
+        if (is_null($severity)) {
+            return "info";
+        }
+
+        $severityOptions = [
+            'debug',
+            'info',
+            'warning',
+            'error',
+            'fatal'
+        ];
+
+        if (in_array($severity, $severityOptions)) {
+            return $severity;
+        }
+
+        return null;
     }
 
     /**
@@ -97,7 +139,7 @@ abstract class BaseException extends Exception
         $message = $this->parseTranslation('message');
 
         if (is_null($message)) {
-            return __('exception.defaultException.message');
+            return __('exceptions.defaultException.message');
         }
 
         return $message;
@@ -116,7 +158,7 @@ abstract class BaseException extends Exception
         $title = $this->parseTranslation('title');
 
         if (is_null($title)) {
-            return __('exception.defaultException.title');
+            return __('exceptions.defaultException.title');
         }
 
         return $title;
@@ -238,5 +280,21 @@ abstract class BaseException extends Exception
     public function setCoreExceptionCode(string $coreExceptionCode): void
     {
         $this->coreExceptionCode = $coreExceptionCode;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getSeverity(): string
+    {
+        return $this->severity;
+    }
+
+    /**
+     * @param null|string $severity
+     */
+    public function setSeverity(string $severity)
+    {
+        $this->severity = $severity;
     }
 }

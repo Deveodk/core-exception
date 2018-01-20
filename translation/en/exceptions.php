@@ -16,43 +16,38 @@ return [
         'message' => 'Something went wrong'
     ],
 
-    'NotFoundException' => [
+    \DeveoDK\Core\Exception\Exceptions\Http\ResourceNotFoundException::class => [
         'title' => 'Not found',
         'message' => 'The requested resource was not found'
     ],
 
-    'MethodNotAllowedException' => [
+    \DeveoDK\Core\Exception\Exceptions\Http\MethodNotAllowedException::class => [
         'title' => 'Http method not allowed',
         'message' => 'The requested Http method was not allowed'
     ],
 
-    'ToManyRequestsException' => [
+    \DeveoDK\Core\Exception\Exceptions\Http\ToManyRequestsException::class => [
         'title' => 'To many requests',
         'message' => 'There have been to many request in the given amount of time'
     ],
 
-    'CreationFailedException' => [
+    \DeveoDK\Core\Exception\Exceptions\Crud\CreationFailedException::class => [
         'title' => 'Creation failed',
         'message' => 'Failed to create resource'
     ],
 
-    'DeleteFailedException' => [
+    \DeveoDK\Core\Exception\Exceptions\Crud\DeleteFailedException::class => [
         'title' => 'Delete failed',
         'message' => 'Failed to delete resource'
     ],
 
-    'ReadFailedException' => [
+    \DeveoDK\Core\Exception\Exceptions\Crud\ReadFailedException::class => [
         'title' => 'Read failed',
         'message' => 'Failed to retrieve resource'
     ],
 
-    'UpdateFailedException' => [
+    \DeveoDK\Core\Exception\Exceptions\Crud\UpdateFailedException::class => [
         'title' => 'Update failed',
         'message' => 'Failed to update resource'
     ],
-
-    'ServerException' => [
-        'title' => 'Server error',
-        'message' => 'Something went wrong on our side'
-    ]
 ];

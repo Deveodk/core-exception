@@ -5,6 +5,7 @@ namespace DeveoDK\Core\Exception\Handlers;
 use DeveoDK\Core\Exception\Exceptions\BaseException;
 use DeveoDK\Core\Exception\Exceptions\Http\MethodNotAllowedException;
 use DeveoDK\Core\Exception\Exceptions\Http\NotFoundException;
+use DeveoDK\Core\Exception\Exceptions\Http\ResourceNotFoundException;
 use DeveoDK\Core\Exception\Exceptions\Http\ToManyRequestsException;
 use DeveoDK\Core\Exception\Formatters\CoreExceptionFormatter;
 use DeveoDK\Core\Exception\Formatters\ExceptionFormatter;
@@ -41,6 +42,10 @@ class ExceptionHandler extends Handler
      * @param \Illuminate\Http\Request $request
      * @param Exception $exception
      * @return \Symfony\Component\HttpFoundation\Response
+     * @throws CoreValidation
+     * @throws MethodNotAllowedException
+     * @throws ResourceNotFoundException
+     * @throws ToManyRequestsException
      */
     public function render($request, Exception $exception)
     {
@@ -48,7 +53,13 @@ class ExceptionHandler extends Handler
             return parent::render($request, $exception);
         }
 
-        return $this->renderFromFormatter($exception);
+        $whoops = null;
+
+        if (config('core.exceptions.exception_show_whoops')) {
+            $whoops = $this->convertExceptionToResponse($exception)->getContent();
+        }
+
+        return $this->renderFromFormatter($exception, $whoops);
     }
 
     /**
@@ -61,22 +72,34 @@ class ExceptionHandler extends Handler
     }
 
     /**
-     * @param Exception $exception
+     * @param Exception|BaseException $exception
      * @return mixed
+     * @throws Exception
      */
     public function report(Exception $exception)
     {
         $config = config('core.exception');
         $reporterClass = $config['reporter'];
+        $severity = null;
 
         if (!$this->shouldReport($exception)) {
             return parent::report($exception);
         }
 
+        if (method_exists($exception, 'getSeverity')) {
+            $severity = $exception->getSeverity();
+        }
+
+        if (!$config['exception_report_everything']) {
+            if ($severity === 'info') {
+                return null;
+            }
+        }
+
         if (class_exists($reporterClass)) {
             /** @var ReporterInterface $reporter */
             $reporter = new $reporterClass();
-            $reportedID = $reporter->report($exception);
+            $reportedID = $reporter->report($exception, $severity);
             $this->reportedID = $reportedID;
         }
 
@@ -85,9 +108,14 @@ class ExceptionHandler extends Handler
 
     /**
      * @param Exception $exception
+     * @param string|null $whoops
      * @return JsonResponse
+     * @throws CoreValidation
+     * @throws MethodNotAllowedException
+     * @throws ResourceNotFoundException
+     * @throws ToManyRequestsException
      */
-    protected function renderFromFormatter(Exception $exception)
+    protected function renderFromFormatter(Exception $exception, ?string $whoops = null)
     {
         $this->convertToCoreException($exception);
 
@@ -101,18 +129,17 @@ class ExceptionHandler extends Handler
             'errors' => [],
         ];
 
+        $exceptionFormatter = new CoreExceptionFormatter();
+
         switch ($exception) {
             case $exception instanceof CoreValidation:
-                $exceptionFormatter = new ValidationFormatter();
-                array_push($errors['errors'], $exceptionFormatter->format($exception, []));
+                array_push($errors['errors'], $exceptionFormatter->formatValidationException($exception));
                 break;
             case $exception instanceof BaseException:
-                $exceptionFormatter = new CoreExceptionFormatter();
-                array_push($errors['errors'], $exceptionFormatter->format($exception, []));
+                array_push($errors['errors'], $exceptionFormatter->format($exception, $whoops));
                 break;
             default:
-                $exceptionFormatter = new ExceptionFormatter();
-                array_push($errors['errors'], $exceptionFormatter->format($exception, []));
+                array_push($errors['errors'], $exceptionFormatter->format($exception, $whoops));
                 break;
         }
 
@@ -132,14 +159,14 @@ class ExceptionHandler extends Handler
      * @param Exception $exception
      * @throws CoreValidation
      * @throws MethodNotAllowedException
-     * @throws NotFoundException
      * @throws ToManyRequestsException
+     * @throws ResourceNotFoundException
      */
     protected function convertToCoreException(Exception $exception)
     {
         switch ($exception) {
             case $exception instanceof NotFoundHttpException:
-                throw new NotFoundException();
+                throw new ResourceNotFoundException();
                 break;
             case $exception instanceof ValidationException:
                 throw new CoreValidation($exception->validator);

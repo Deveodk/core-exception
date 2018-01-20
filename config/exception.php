@@ -19,6 +19,19 @@ return [
      */
     'exception_handler' => env('EXCEPTION_HANDLER', 'core'),
 
+    /**
+     * Should every exception except the ones in ignore array be reported,
+     * The default logging level is info and info exceptions wont be reported if false
+     * Use ENV to set, default is true
+     */
+    'exception_report_everything' => env('EXCEPTION_REPORT_EVERYTHING', true),
+
+    /**
+     * Should the exception show whoops response in array,
+     * WARNING: This will expose the current env
+     */
+    'exception_show_whoops' => env('EXCEPTION_SHOW_WHOOPS', false),
+
     /*
      * Exception codes for the core exception based platform.
      */
