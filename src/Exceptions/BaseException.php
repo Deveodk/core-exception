@@ -204,7 +204,13 @@ abstract class BaseException extends Exception
 
         $errorCodes = $config['error_codes'];
 
-        return $this->findExceptionCode($errorCodes);
+        $code = $this->findExceptionCode($errorCodes);
+
+        if ($code === null) {
+            return 0;
+        }
+
+        return $code;
     }
 
     /**
@@ -268,9 +274,9 @@ abstract class BaseException extends Exception
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getCoreExceptionCode(): string
+    public function getCoreExceptionCode(): ?string
     {
         return $this->coreExceptionCode;
     }
